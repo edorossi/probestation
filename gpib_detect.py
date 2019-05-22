@@ -27,15 +27,21 @@ class GPIBDetector ( object ) :
 		logger.debug ( u"  Probing devices..." )
 		for res in resources:
 			logger.debug ( u"   Found %s", res )
-			if not ( res.startswith ( u"ASRL" ) or res.startswith ( u"GPIB" ) ) :
+			if not ( res.startswith ( u"ASRL" ) or res.startswith ( u"GPIB" ) or res.startswith ( u"USB0" ) ) :
+				continue
+			if ( res.startswith ( u"ASRL/dev/ttyS" ) ) :
 				continue
 
 			dev = None
-			if res.startswith ( u"ASRL" ) and useserial.haveserial :
+			if (res.startswith ( u"ASRL" ) or res.startswith ( u"USB" ))and useserial.haveserial :
 				logger.debug ( u"   Opening serial connection to %s", res )
 				try :
-					# 5000 msecs needed to catch slow devices...
-					dev = self._rm2.open_resource ( res, baud_rate = 19200, data_bits = 8, timeout = 5000 )
+					if (res.startswith ( u"USB0" )):
+						dev = self._rm2.open_resource(res)
+					else:
+						# 5000 msecs needed to catch slow devices...
+						dev = self._rm2.open_resource ( res, baud_rate = 19200, data_bits = 8, timeout = 5000 )
+                                        
 				except :
 					logger.debug ( u"   Could not open serial connection to %s", res )
 			if res.startswith ( u"GPIB" ) :

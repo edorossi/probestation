@@ -65,7 +65,7 @@ class Keithley6517B ( KeithleyMeter ) :
 
 		self._write ( ":SENSE:FUNCTION 'CURRENT:DC'" )
 
-		self._write ( ":SENSE:CURRENT:DC:NPLCYCLES 1; AVERAGE:COUNT 5; STATE OFF" )
+		self._write ( ":SENSE:CURRENT:DC:NPLCYCLES 100; AVERAGE:COUNT 5; STATE OFF" )
 		self._write ( ":FORMAT:ELEMENTS READING,UNITS,VSOURCE" )
 
 	# FIXME
@@ -255,25 +255,20 @@ class Keithley2410 ( KeithleyMeter ) :
 		current = float(line.split(",",2)[1])
 		return { "{}_srcvoltage".format ( devname ) : voltage, "{}_current" .format ( devname ) : current }
 
-class Keithley6485 ( KeithleyMeter ) :
+class Keithley6482 ( KeithleyMeter ) :
 	def __init__ ( self, resource_name ) :
-		super ( Keithley6485, self ) .__init__ ( resource_name )
+		super ( Keithley6482, self ) .__init__ ( resource_name )
 
 		self._write ( ":SENSE:FUNCTION 'CURRENT:DC'" )
 		self._write ( ":FORMAT:ELEMENTS READING,UNITS" )
 		self._write ( ":SENSE:AVERAGE:COUNT 5; STATE ON" )
-
+		
 	def parse_iv ( self, line, devname ) :
 		voltage = current = None
-		for field in line.split ( "," ) :
-			if field[-3:] == "ADC" :
-				current = float ( field[:-3] )
-			elif field[-1:] == "A" :
-				current = float ( field[:-1] )
-			elif field[-4:] == "Vsrc" :
-				voltage = float ( field[:-4] )
+		current = float(line.split(",",2)[0])
+		voltage= float(line.split(",",2)[1])
 		return { "{}_srcvoltage".format ( devname ) : voltage, "{}_current" .format ( devname ) : current }
 
 if __name__ == "__main__" :
 	k = Keithley6517B ( "GPIB0::21::INSTR" )
-	l = Keithley6485 ( "GPIB0::11::INSTR" )
+	l = Keithley6482 ( "GPIB0::11::INSTR" )

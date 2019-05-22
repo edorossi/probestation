@@ -148,7 +148,7 @@ class DirectoryLayout ( QtW.QHBoxLayout ):
 	def getOutputDir ( self ) :
 		return self._edit.text ( )
 
-MeasurementArgs = namedtuple ( u"MeasurementArgs", [u"type", u"devname_hv", u"devname_kei6485", u"devname_agiE4980A", u"start", u"end", u"step", u"compcurrent", u"guardring", u"resistance", u"frequency", u"deltavolt", u"sleep", u"output_dir"] )
+MeasurementArgs = namedtuple ( u"MeasurementArgs", [u"type", u"devname_hv", u"devname_kei6482", u"devname_agiE4980A", u"start", u"end", u"step", u"compcurrent", u"guardring", u"resistance", u"frequency", u"deltavolt", u"sleep", u"output_dir"] )
 
 class IvTab ( QtW.QWidget ) :
 	def __init__ ( self, parent_win, output_dir ) :
@@ -235,17 +235,17 @@ class IvTab ( QtW.QWidget ) :
 				self._parent_win.showErrorDialog ( u"Could not find Keithley 6517B or Keithley 2410." )
 				return
 			if guardring :
-				kei6485_devname = detector.get_resname_for ( u"KEITHLEY INSTRUMENTS INC.,MODEL 6485" )
-				if kei6485_devname is None :
-					self._parent_win.showErrorDialog ( u"Could not find Keithley 6485." )
+				kei6482_devname = detector.get_resname_for ( u"KEITHLEY INSTRUMENTS INC.,MODEL 6482" )
+				if kei6482_devname is None :
+					self._parent_win.showErrorDialog ( u"Could not find Keithley 6482." )
 					return
 			else :
-				kei6485_devname = None
+				kei6482_devname = None
 		except VisaIOError :
 			self._parent_win.showErrorDialog ( u"Could not connect to GPIB/serial devices." )
 			return
 
-		args = MeasurementArgs ( u"IV", hvdev_devname, kei6485_devname, None, start, end, step, compcurrent, guardring, None, None, None, sleeptime, output_dir )
+		args = MeasurementArgs ( u"IV", hvdev_devname, kei6482_devname, None, start, end, step, compcurrent, guardring, None, None, None, sleeptime, output_dir )
 		self._parent_win.startMeasurement ( args )
 
 class CvTab ( QtW.QWidget ) :
@@ -338,9 +338,9 @@ class CvTab ( QtW.QWidget ) :
 			if ( kei6517b_devname is None and kei2410_devname is None ) :
 				self._parent_win.showErrorDialog ( u"Could not find Keithley 6517B or Keithley 2410." )
 				return
-			agie4980a_devname = detector.get_resname_for ( u"Agilent Technologies,E4980A" )
+			agie4980a_devname = detector.get_resname_for ( u"Keysight Technologies,E4980A" )
 			if agie4980a_devname is None :
-				self._parent_win.showErrorDialog ( u"Could not find Agilent E4980A." )
+				self._parent_win.showErrorDialog ( u"Could not find Keysight E4980A." )
 				return
 		except VisaIOError :
 			self._parent_win.showErrorDialog ( u"Could not connect to GPIB/serial devices." )
@@ -448,9 +448,9 @@ class StripTab ( QtW.QWidget ) :
 			if ( kei6517b_devname is None and kei2410_devname is None ) :
 				self._parent_win.showErrorDialog ( u"Could not find Keithley 6517B or Keithley 2410." )
 				return
-			agie4980a_devname = detector.get_resname_for ( u"Agilent Technologies,E4980A" )
+			agie4980a_devname = detector.get_resname_for ( u"Keysight Technologies,E4980A" )
 			if agie4980a_devname is None :
-				self._parent_win.showErrorDialog ( u"Could not find Agilent E4980A." )
+				self._parent_win.showErrorDialog ( u"Could not find Keysight E4980A." )
 				return
 		except VisaIOError :
 			self._parent_win.showErrorDialog ( u"Could not connect to GPIB/serial devices." )

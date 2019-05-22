@@ -55,11 +55,11 @@ class IvMeasurementThread ( MeasurementThread ) :
 				return
 			logger.info ( u"  Voltage source device introduced itself as {}" .format ( keith_hv.identify ( ) ) )
 			
-			if not args.devname_kei6485 is None and args.guardring :
-				keith6485 = keithley.Keithley6485 ( args.devname_kei6485 )
-				logger.info ( u"  Guard ring device introduced itself as {}" .format ( keith6485.identify ( ) ) )
+			if not args.devname_kei6482 is None and args.guardring :
+				keith6482 = keithley.Keithley6482 ( args.devname_kei6482 )
+				logger.info ( u"  Guard ring device introduced itself as {}" .format ( keith6482.identify ( ) ) )
 			else :
-				keith6485 = None
+				keith6482 = None
 				logger.info ( u"  Running without guard ring measurement" )
 		except VisaIOError :
 			errormsg = u"Could not open devices."
@@ -77,8 +77,8 @@ class IvMeasurementThread ( MeasurementThread ) :
 			keith_hv.set_compliance ( args.compcurrent )
 
 			with open ( output_csv, mode ) as f :
-				if not keith6485 is None :
-					header = OrderedDict ( [ ( 'keihv_srcvoltage', None ), ( 'keihv_current', None ), ( 'kei6485_current', None ) ] )
+				if not keith6482 is None :
+					header = OrderedDict ( [ ( 'keihv_srcvoltage', None ), ( 'keihv_current', None ), ( 'kei6482_current', None ) ] )
 				else :
 					header = OrderedDict ( [ ( 'keihv_srcvoltage', None ), ( 'keihv_current', None ) ] )
 				writer = csv.DictWriter ( f, fieldnames = header, extrasaction = u"ignore" )
@@ -96,17 +96,17 @@ class IvMeasurementThread ( MeasurementThread ) :
 					if self._exiting :
 						break
 
-					if not keith6485 is None :
-						gr_line = keith6485.get_reading ( )
-						meas.update ( keith6485.parse_iv ( gr_line, u"kei6485" ) )
-						if ( not u"kei6485_current" in meas or meas[u"kei6485_current"] is None ) :
-							raise IOError ( u"Got invalid response from Keithley 6485" )
-						print ( u"VSrc = {: 10.4g} V; I = {: 10.4g} A; IGr = {: 10.4g} A" .format ( meas[u"keihv_srcvoltage"], meas[u"keihv_current"], meas[u"kei6485_current"] ) )
+					if not keith6482 is None :
+						gr_line = keith6482.get_reading ( )
+						meas.update ( keith6482.parse_iv ( gr_line, u"kei6482" ) )
+						if ( not u"kei6482_current" in meas or meas[u"kei6482_current"] is None ) :
+							raise IOError ( u"Got invalid response from Keithley 6482" )
+						print ( u"VSrc = {: 10.4g} V; I = {: 10.4g} A; IGr = {: 10.4g} A" .format ( meas[u"keihv_srcvoltage"], meas[u"keihv_current"], meas[u"kei6482_current"] ) )
 					else :
-						meas[u"kei6485_current"] = 0
+						meas[u"kei6482_current"] = 0
 						print ( u"VSrc = {: 10.4g} V; I = {: 10.4g} A" .format ( meas[u"keihv_srcvoltage"], meas[u"keihv_current"] ) )
 
-					if ( abs ( meas[u"keihv_current"] ) >= args.compcurrent or abs ( meas[u"kei6485_current"] ) >= args.compcurrent ) :
+					if ( abs ( meas[u"keihv_current"] ) >= args.compcurrent or abs ( meas[u"kei6482_current"] ) >= args.compcurrent ) :
 						self.error_signal.emit ( u"Compliance current reached" )
 						print ( u"Compliance current reached" )
 						#Instant turn off
@@ -115,7 +115,7 @@ class IvMeasurementThread ( MeasurementThread ) :
 
 					writer.writerow ( meas )
 					if args.guardring :
-						self.measurement_ready.emit ( ( meas[u"keihv_srcvoltage"], meas[u"keihv_current"], meas[u"kei6485_current"] ) )
+						self.measurement_ready.emit ( ( meas[u"keihv_srcvoltage"], meas[u"keihv_current"], meas[u"kei6482_current"] ) )
 					else :
 						self.measurement_ready.emit ( ( meas[u"keihv_srcvoltage"], meas[u"keihv_current"] ) )
 					if self._exiting :

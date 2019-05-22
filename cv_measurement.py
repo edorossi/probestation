@@ -108,11 +108,14 @@ class CvMeasurementThread ( MeasurementThread ) :
 
 					if self._exiting :
 						break
+					sleep ( 2 )
 
 		except IOError as e :
 			errormsg = u"Error: {}" .format ( e )
 			self.error_signal.emit ( errormsg )
 			logger.error ( errormsg )
+
+
 		except ( VisaIOError, InvalidBinaryFormat, ValueError ) :
 			errormsg = u"Error during communication with devices."
 			self.error_signal.emit ( errormsg )
